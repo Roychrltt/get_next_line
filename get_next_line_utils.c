@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:22:51 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/21 18:13:29 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/21 21:17:44 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,39 +42,46 @@ static void	ft_strcpy(char *dst, const char *src)
 
 	i = 0;
 	while (src[i])
-		dst[i] = src[i++];
+	{
+		dst[i] = src[i];
+		i++;
+	}
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	len1;
 	size_t	len2;
-	char	*result;
+	char	*res;
 
 	if (!s1 || !s2)
 		return (NULL);
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
-	result = malloc(len1 + len2 + 1);
-	if (!result)
+	res = malloc(len1 + len2 + 1);
+	if (!res)
 		return (NULL);
 	ft_strcpy(res, s1);
 	ft_strcpy((res + len1), s2);
-	result[len1 + len2] = 0;
-	return (result);
+	res[len1 + len2] = 0;
+	return (res);
 }
 
-char	*ft_substr(char const *s, unsigned int start)
+char	*ft_substr(char const *s, size_t start, size_t len)
 {
 	char	*sub;
 	size_t	i;
 
-	i = ft_strlen(s + start + 1);
+	if (start)
+		start++;
+	i = ft_strlen(s + start);
+	if (i > len)
+		i = len;
 	sub = malloc(i + 1);
 	if (!sub)
 		return (NULL);
 	sub[i] = 0;
 	while (i--)
-		sub[i] = s[start + i + 1];
+		sub[i] = s[start + i];
 	return (sub);
 }
