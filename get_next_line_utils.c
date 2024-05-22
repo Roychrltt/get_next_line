@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:22:51 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/22 09:14:04 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/22 22:57:14 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,23 +49,19 @@ void	ft_strlcpy(char *dst, const char *src, size_t len)
 	dst[i] = 0;
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strdup(const char *s)
 {
-	size_t	len1;
-	size_t	len2;
-	char	*res;
+	size_t	len;
+	char	*new;
 
-	if (!s1 || !s2)
+	len = ft_strlen(s);
+	new = malloc(len + 1);
+	if (!new)
 		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	res = malloc(len1 + len2 + 1);
-	if (!res)
-		return (NULL);
-	ft_strlcpy(res, s1, len1);
-	ft_strlcpy((res + len1), s2, len2);
-	res[len1 + len2] = 0;
-	return (res);
+	new[len] = 0;
+	while (len--)
+		new[len] = s[len];
+	return (new);
 }
 
 char	*ft_substr(char const *s, size_t start, size_t len)
