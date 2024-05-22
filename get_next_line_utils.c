@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:22:51 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/21 21:17:44 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/22 09:14:04 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,17 @@ size_t	ft_strchr(const char *s)
 	return (i);
 }
 
-static void	ft_strcpy(char *dst, const char *src)
+void	ft_strlcpy(char *dst, const char *src, size_t len)
 {
 	size_t	i;
 
 	i = 0;
-	while (src[i])
+	while (i < len)
 	{
 		dst[i] = src[i];
 		i++;
 	}
+	dst[i] = 0;
 }
 
 char	*ft_strjoin(char *s1, char *s2)
@@ -61,8 +62,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	res = malloc(len1 + len2 + 1);
 	if (!res)
 		return (NULL);
-	ft_strcpy(res, s1);
-	ft_strcpy((res + len1), s2);
+	ft_strlcpy(res, s1, len1);
+	ft_strlcpy((res + len1), s2, len2);
 	res[len1 + len2] = 0;
 	return (res);
 }
@@ -72,7 +73,7 @@ char	*ft_substr(char const *s, size_t start, size_t len)
 	char	*sub;
 	size_t	i;
 
-	if (start)
+	if (start != 0)
 		start++;
 	i = ft_strlen(s + start);
 	if (i > len)
