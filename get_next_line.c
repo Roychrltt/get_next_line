@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 12:26:00 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/24 19:13:30 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/24 21:16:14 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,10 @@ static int	check_remnant(char *remnant, char *readed)
 static void	update_readed(char **readed, char **new)
 {
 	char	*temp;
-
 	if (ft_strlen(*readed) == 0)
+	{
 		ft_strlcpy(*readed, *new, ft_strlen(*new));
+	}
 	else
 	{
 		temp = malloc(ft_strlen(*readed) + ft_strlen(*new) + 1);
@@ -57,6 +58,7 @@ void	read_file(int fd, char *cur, char *readed, char *remnant)
 	size_t	bytes_read;
 	size_t	pos;
 
+
 	while ((bytes_read = read(fd, cur, BUFFER_SIZE)) > 0)
 	{
 		cur[bytes_read] = 0;
@@ -67,13 +69,13 @@ void	read_file(int fd, char *cur, char *readed, char *remnant)
 			if (!new)
 				return ;
 			update_readed(&readed, &new);
-			remnant += pos + 1;
+			free(new);
+			ft_memcpy(remnant, remnant + pos + 1);
 			break ;
 		}
 		else
 			update_readed(&readed, &cur);
 	}
-	free(new);
 	free(cur);
 }
 
@@ -85,11 +87,9 @@ char	*get_next_line(int fd)
 
 	cur = malloc(BUFFER_SIZE + 1);
 	readed = malloc(BUFFER_SIZE + 1);
-	remnant[0] = 0;
 	if (!cur || !readed)
 		return (NULL);
 	cur[0] = 0;
-	readed[0] = 0;
 	if (check_remnant(remnant, readed))
 	{
 		free(cur);
@@ -104,16 +104,14 @@ char	*get_next_line(int fd)
 	return (readed);
 }
 
-#include <stdio.h>
 
 int main()
 {
 	int fd = open("readlinetest.txt", O_RDONLY);
 	char *s = get_next_line(fd);
 	printf("Line read: %s\n", s);
+	s = get_next_line(fd);
+	printf("Line read: %s", s);
 	free(s);
-	char *s1 = get_next_line(fd);
-	printf("Line read: %s", s1);
-	free(s1);
 }
 
