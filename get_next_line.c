@@ -6,22 +6,11 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 12:26:00 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/22 10:17:29 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/24 10:42:37 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-
-static char	*strinit(void)
-{
-	char	*s;
-
-	s = malloc(BUFFER_SIZE + 1);
-	if (!s)
-		return (NULL);
-	s[0] = 0;
-	return (s);
-}
 
 static int	check_remnant(char **remnant, char **readed)
 {
@@ -51,19 +40,23 @@ static int	check_remnant(char **remnant, char **readed)
 	return (0);
 }
 
-static void	update_readed(char **readed, char *new)
+static void	update_readed(char **readed, char **new)
 {
 	char	*temp;
 
-	if (!*readed)
-		*readed = new;
+	if (*readed == 0)
+		ft_strlcpy(*readed, *new, ft_strlen(*new));
 	else
 	{
-		temp = ft_strjoin(*readed, new);
+		temp = malloc(ft_strlen(*readed) + ft_strlen(*new) + 1);
+		if (!temp)
+			return ;
+		ft_strlcpy(temp, *readed, ft_strlen(*readed) + 1);
+		ft_strlcpy(temp + ft_strlen(*readed), *new, ft_strlen(*new) + 1);
 		free(*readed);
 		*readed = temp;
-		free(new);
 	}
+	free(*new);
 }
 
 void	read_file(int fd, char *cur, char *readed, char **remnant)
@@ -71,20 +64,19 @@ void	read_file(int fd, char *cur, char *readed, char **remnant)
 	char	*new;
 	size_t	bytes_read;
 
-	bytes_read = read(fd, cur, BUFFER_SIZE);
-	while (bytes_read > 0)
+	while ((bytes_read = read(fd, cur, BUFFER_SIZE)) > 0)
 	{
 		cur[bytes_read] = 0;
-		if (ft_strchr(cur) < BUFFER_SIZE)
+		if (ft_strchr(cur) < bytes_read)
 		{
 			new = ft_substr(cur, 0, ft_strchr(cur) + 1);
-			update_readed(&readed, new);
+			update_readed(&readed, &new);
 			free(*remnant);
 			*remnant = ft_substr(cur, ft_strchr(cur) + 1, BUFFER_SIZE);
 			break ;
 		}
 		else
-			update_readed(&readed, cur);
+			update_readed(&readed, &cur);
 	}
 	free(cur);
 }
@@ -95,14 +87,12 @@ char	*get_next_line(int fd)
 	char		*readed;
 	static char	*remnant = NULL;
 
-	cur = strinit();
-	readed = strinit();
+	cur = malloc(BUFFER_SIZE + 1);
+	readed = malloc(BUFFER_SIZE + 1);
 	if (!cur || !readed)
-	{
-		free(cur);
-		free(readed);
 		return (NULL);
-	}
+	cur[0] = 0;
+	readed[0] = 0;
 	if (check_remnant(&remnant, &readed))
 	{
 		free(cur);
@@ -116,6 +106,7 @@ char	*get_next_line(int fd)
 	}
 	return (readed);
 }
+
 #include <stdio.h>
 
 int main()
@@ -128,3 +119,4 @@ int main()
 	printf("Line read: %s", s1);
 	free(s1);
 }
+
