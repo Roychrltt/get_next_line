@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:22:51 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/22 22:57:14 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/24 18:30:46 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	ft_strlcpy(char *dst, const char *src, size_t len)
 	size_t	i;
 
 	i = 0;
-	while (i < len)
+	while (src[i] && i < len)
 	{
 		dst[i] = src[i];
 		i++;
@@ -69,8 +69,6 @@ char	*ft_substr(char const *s, size_t start, size_t len)
 	char	*sub;
 	size_t	i;
 
-	if (start != 0)
-		start++;
 	i = ft_strlen(s + start);
 	if (i > len)
 		i = len;
