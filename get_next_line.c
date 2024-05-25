@@ -6,12 +6,11 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 12:26:00 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/25 15:08:56 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/25 19:01:05 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 int	check_remnant(char *remnant, char *readed)
 {
@@ -39,6 +38,7 @@ void	update_readed(char **readed, char *new)
 	char	*temp;
 	size_t	readlen;
 	size_t	newlen;
+
 	readlen = ft_strlen(*readed);
 	newlen = ft_strlen(new);
 	if (readlen == 0)
@@ -61,8 +61,8 @@ void	read_file(int fd, char *cur, char **readed, char *remnant)
 	size_t	bytes_read;
 	size_t	pos;
 
-
-	while ((bytes_read = read(fd, cur, BUFFER_SIZE)) > 0)
+	bytes_read = read(fd, cur, BUFFER_SIZE);
+	while (bytes_read > 0)
 	{
 		cur[bytes_read] = 0;
 		pos = ft_strchr(cur);
@@ -78,6 +78,7 @@ void	read_file(int fd, char *cur, char **readed, char *remnant)
 		}
 		else
 			update_readed(readed, cur);
+		bytes_read = read(fd, cur, BUFFER_SIZE);
 	}
 }
 
@@ -87,33 +88,31 @@ char	*get_next_line(int fd)
 	char		*readed;
 	static char	remnant[BUFFER_SIZE + 1];
 
+	if (fd == -1)
+		return (NULL);
 	cur = malloc(BUFFER_SIZE + 1);
 	if (!cur)
 		return (NULL);
+	cur[0] = 0;
 	readed = malloc(BUFFER_SIZE + 1);
 	if (!readed)
 		return (free(cur), NULL);
+	readed[0] = 0;
 	if (check_remnant(remnant, readed))
-	{
-		free(cur);
-		return (readed);
-	}
+		return (free(cur), readed);
 	read_file(fd, cur, &readed, remnant);
 	free(cur);
 	if (ft_strlen(readed) == 0)
-	{
-		free(readed);
-		return (NULL);
-	}
+		return (free(readed), NULL);
 	return (readed);
 }
-
+/*
+#include <stdio.h>
 
 int main()
 {
-	int fd = open("readlinetest.txt", O_RDONLY);
-	printf("first line readed: %s", get_next_line(fd));
-	printf("first line readed: %s", get_next_line(fd));
-	printf("first line readed: %s", get_next_line(fd));
-}
-
+int fd = open("readlinetest.txt", O_RDONLY);
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+}*/
