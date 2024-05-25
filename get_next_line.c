@@ -6,17 +6,18 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 12:26:00 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/24 21:16:14 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/25 15:08:56 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
-//check if *remnant is well terminated
-static int	check_remnant(char *remnant, char *readed)
+
+int	check_remnant(char *remnant, char *readed)
 {
 	size_t	pos;
 	size_t	len;
+
 	if (*remnant)
 	{
 		pos = ft_strchr(remnant);
@@ -24,7 +25,7 @@ static int	check_remnant(char *remnant, char *readed)
 		if (pos < len)
 		{
 			ft_strlcpy(readed, remnant, pos + 1);
-			remnant += pos + 1;
+			ft_strlcpy(remnant, remnant + pos + 1, len - pos - 1);
 			return (1);
 		}
 		else
@@ -33,26 +34,28 @@ static int	check_remnant(char *remnant, char *readed)
 	return (0);
 }
 
-static void	update_readed(char **readed, char **new)
+void	update_readed(char **readed, char *new)
 {
 	char	*temp;
-	if (ft_strlen(*readed) == 0)
-	{
-		ft_strlcpy(*readed, *new, ft_strlen(*new));
-	}
+	size_t	readlen;
+	size_t	newlen;
+	readlen = ft_strlen(*readed);
+	newlen = ft_strlen(new);
+	if (readlen == 0)
+		ft_strlcpy(*readed, new, newlen);
 	else
 	{
-		temp = malloc(ft_strlen(*readed) + ft_strlen(*new) + 1);
+		temp = malloc(readlen + newlen + 1);
 		if (!temp)
 			return ;
-		ft_strlcpy(temp, *readed, ft_strlen(*readed));
-		ft_strlcpy(temp + ft_strlen(*readed), *new, ft_strlen(*new));
+		ft_strlcpy(temp, *readed, readlen);
+		ft_strlcpy(temp + readlen, new, newlen);
+		free(*readed);
 		*readed = temp;
-		free(temp);
 	}
 }
 
-void	read_file(int fd, char *cur, char *readed, char *remnant)
+void	read_file(int fd, char *cur, char **readed, char *remnant)
 {
 	char	*new;
 	size_t	bytes_read;
@@ -68,15 +71,14 @@ void	read_file(int fd, char *cur, char *readed, char *remnant)
 			new = ft_substr(cur, 0, pos + 1);
 			if (!new)
 				return ;
-			update_readed(&readed, &new);
+			update_readed(readed, new);
 			free(new);
-			ft_memcpy(remnant, remnant + pos + 1);
+			ft_strlcpy(remnant, cur + pos + 1, ft_strlen(cur) - pos);
 			break ;
 		}
 		else
-			update_readed(&readed, &cur);
+			update_readed(readed, cur);
 	}
-	free(cur);
 }
 
 char	*get_next_line(int fd)
@@ -86,16 +88,18 @@ char	*get_next_line(int fd)
 	static char	remnant[BUFFER_SIZE + 1];
 
 	cur = malloc(BUFFER_SIZE + 1);
-	readed = malloc(BUFFER_SIZE + 1);
-	if (!cur || !readed)
+	if (!cur)
 		return (NULL);
-	cur[0] = 0;
+	readed = malloc(BUFFER_SIZE + 1);
+	if (!readed)
+		return (free(cur), NULL);
 	if (check_remnant(remnant, readed))
 	{
 		free(cur);
 		return (readed);
 	}
-	read_file(fd, cur, readed, remnant);
+	read_file(fd, cur, &readed, remnant);
+	free(cur);
 	if (ft_strlen(readed) == 0)
 	{
 		free(readed);
@@ -108,10 +112,8 @@ char	*get_next_line(int fd)
 int main()
 {
 	int fd = open("readlinetest.txt", O_RDONLY);
-	char *s = get_next_line(fd);
-	printf("Line read: %s\n", s);
-	s = get_next_line(fd);
-	printf("Line read: %s", s);
-	free(s);
+	printf("first line readed: %s", get_next_line(fd));
+	printf("first line readed: %s", get_next_line(fd));
+	printf("first line readed: %s", get_next_line(fd));
 }
 
