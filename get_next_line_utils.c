@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 13:22:51 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/24 20:23:17 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/26 15:11:33 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	i = 0;
+	if (!s)
+		return (0);
 	while (s[i])
 		i++;
 	return (i);
@@ -47,18 +49,6 @@ void	ft_strlcpy(char *dst, const char *src, size_t len)
 		i++;
 	}
 	dst[i] = 0;
-}
-
-void	ft_memcpy(char *dst, char *src)
-{
-	size_t		i;
-
-	i = 0;
-	while (src[i])
-	{
-		dst[i] = src[i];
-		i++;
-	}
 }
 
 char	*ft_substr(char const *s, size_t start, size_t len)

@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 18:15:33 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/25 15:09:30 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/26 15:11:23 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 size_t	ft_strlen(const char *s);
 size_t	ft_strchr(const char *s);
 void	ft_strlcpy(char *dst, const char *src, size_t len);
-void	ft_memcpy(char *dst, char *src);
 char	*ft_substr(char const *s, size_t start, size_t len);
 char	*get_next_line(int fd);
 
