@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 12:26:00 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/25 19:01:05 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/26 14:38:54 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ void	read_file(int fd, char *cur, char **readed, char *remnant)
 			update_readed(readed, cur);
 		bytes_read = read(fd, cur, BUFFER_SIZE);
 	}
+	if (bytes_read == 0)
+		remnant[0] = 0;
 }
 
 char	*get_next_line(int fd)
@@ -88,7 +90,7 @@ char	*get_next_line(int fd)
 	char		*readed;
 	static char	remnant[BUFFER_SIZE + 1];
 
-	if (fd == -1)
+	if (BUFFER_SIZE < 1 || fd < 0 || read(fd, 0, 0) < 0)
 		return (NULL);
 	cur = malloc(BUFFER_SIZE + 1);
 	if (!cur)
@@ -108,11 +110,21 @@ char	*get_next_line(int fd)
 }
 /*
 #include <stdio.h>
-
 int main()
 {
-int fd = open("readlinetest.txt", O_RDONLY);
+int fd = open("test.txt", O_RDONLY);
 printf("Line readed: %s", get_next_line(fd));
 printf("Line readed: %s", get_next_line(fd));
 printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+printf("Line readed: %s", get_next_line(fd));
+close(fd);
 }*/
