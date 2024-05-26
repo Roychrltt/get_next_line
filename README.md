@@ -2,4 +2,4 @@
 
 Hours invested: around 20H
 
-Tested with francinette, certain KO and Timesout are tolerable.
+Tested with francinette, certain KO and Timeout are tolerable.
