@@ -1,3 +1,5 @@
 # get_next_line
 
-Hours committed : around 20
+Hours invested: around 20H
+
+Tested with francinette, certain KO and Timesout are tolerable.
