@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:17:14 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/26 15:18:00 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/26 15:38:51 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ typedef struct s_fdList
 	struct s_fdList			*next_fdlist;
 }			t_fdList;
 
-char			*get_next_line(int fd);
 t_bufferList	*ft_lst_new_buffer(void);
 t_fdList		*ft_lst_new_fd(int fd);
 t_fdList		*ft_lst_first(int fd, t_fdList **fdList);
-int				ft_strchr(char *s);
-size_t			count_memory(t_bufferList *current);
+size_t			ft_strchr(char *s);
+size_t			buffer_length(t_bufferList *current);
+char			*get_next_line(int fd);
 
 #endif

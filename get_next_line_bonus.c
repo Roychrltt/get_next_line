@@ -6,13 +6,13 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:16:08 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/26 15:16:51 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/26 15:39:28 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-static int	ft_read_fd(int fd, t_bufferList *first, t_bufferList *c_buffer)
+static int	ft_read_fd(int fd, t_bufferList *first, t_bufferList *cur_buffer)
 {
 	int	bytes_read;
 
@@ -22,18 +22,18 @@ static int	ft_read_fd(int fd, t_bufferList *first, t_bufferList *c_buffer)
 	else if (first && (first->content[0]))
 	{
 		first->next_bufferlist = ft_lst_new_buffer();
-		c_buffer = first->next_bufferlist;
+		cur_buffer = first->next_bufferlist;
 	}
 	while (1)
 	{
-		bytes_read = read(fd, c_buffer->content, BUFFER_SIZE);
+		bytes_read = read(fd, cur_buffer->content, BUFFER_SIZE);
 		if (bytes_read <= 0)
 			break ;
-		(c_buffer->content)[bytes_read] = '\0';
-		if (ft_strchr(c_buffer->content))
+		(cur_buffer->content)[bytes_read] = 0;
+		if (ft_strchr(cur_buffer->content))
 			break ;
-		c_buffer->next_bufferlist = ft_lst_new_buffer();
-		c_buffer = c_buffer->next_bufferlist;
+		cur_buffer->next_bufferlist = ft_lst_new_buffer();
+		cur_buffer = cur_buffer->next_bufferlist;
 	}
 	if (!(first->content[0]))
 		return (0);
@@ -46,7 +46,7 @@ static char	*ft_get(t_bufferList *current_buffer)
 	size_t			i;
 	size_t			j;
 
-	line = malloc(count_memory(current_buffer));
+	line = malloc(buffer_length(current_buffer));
 	if (!line)
 		return (NULL);
 	i = 0;
@@ -61,90 +61,75 @@ static char	*ft_get(t_bufferList *current_buffer)
 	return (line);
 }
 
-static void	ft_clean_buffers(t_bufferList *c_buffer, t_fdList *c_fdlist)
+//clean buffer and save the remnant
+static void	ft_clean_buffers(t_bufferList *cur_buffer, t_fdList *cur_fdlist)
 {
 	size_t					i;
 	size_t					j;
 	t_bufferList			*next;
 
-	while (c_buffer->next_bufferlist)
+	while (cur_buffer->next_bufferlist)
 	{
-		next = c_buffer->next_bufferlist;
-		free(c_buffer->content);
-		free(c_buffer);
-		c_buffer = next;
-		c_fdlist->buffer = next;
+		next = cur_buffer->next_bufferlist;
+		free(cur_buffer->content);
+		free(cur_buffer);
+		cur_buffer = next;
+		cur_fdlist->buffer = next;
 	}
 	i = 0;
-	while ((c_buffer->content)[i])
+	while ((cur_buffer->content)[i])
 	{
 		i++;
-		if ((c_buffer->content)[i - 1] == '\n')
+		if ((cur_buffer->content)[i - 1] == '\n')
 			break ;
 	}
 	j = 0;
-	while ((c_buffer->content)[i])
-		(c_buffer->content)[j++] = (c_buffer->content)[i++];
-	(c_buffer->content)[j] = '\0';
+	while ((cur_buffer->content)[i])
+		(cur_buffer->content)[j++] = (cur_buffer->content)[i++];
+	(cur_buffer->content)[j] = 0;
 }
 
-t_fdList	*ft_clean_fd_list(t_fdList *s_list, t_fdList *c_fdlist)
+t_fdList	*ft_clean_fd_list(t_fdList *s_list, t_fdList *cur_fdlist)
 {
 	t_fdList	*tmp;
 
-	if (!((c_fdlist->buffer->content)[0]))
+	if (!((cur_fdlist->buffer->content)[0]))
 	{
-		free(c_fdlist->buffer->content);
-		free(c_fdlist->buffer);
-		if (s_list == c_fdlist)
+		free(cur_fdlist->buffer->content);
+		free(cur_fdlist->buffer);
+		if (s_list == cur_fdlist)
 			s_list = s_list->next_fdlist;
 		else
 		{
 			tmp = s_list;
-			while (tmp->next_fdlist && tmp->next_fdlist != c_fdlist)
+			while (tmp->next_fdlist && tmp->next_fdlist != cur_fdlist)
 				tmp = tmp->next_fdlist;
 			if (tmp->next_fdlist)
 				tmp->next_fdlist = tmp->next_fdlist->next_fdlist;
 		}
-		free(c_fdlist);
+		free(cur_fdlist);
 	}
 	return (s_list);
 }
 
 char	*get_next_line(int fd)
 {
-	char				*s;
-	static t_fdList		*static_fdlist;
-	t_fdList			*c_fdlist;
-	t_bufferList		*c_bufferlist;
+	char				*readed;
+	static t_fdList		*staticur_fdlist;
+	t_fdList			*cur_fdlist;
+	t_bufferList		*cur_bufferlist;
 
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	c_fdlist = ft_lst_first(fd, &static_fdlist);
-	if (!c_fdlist)
+	cur_fdlist = ft_lst_first(fd, &staticur_fdlist);
+	if (!cur_fdlist)
 		return (NULL);
-	c_bufferlist = c_fdlist->buffer;
-	if (ft_read_fd(fd, c_bufferlist, c_bufferlist))
-		s = ft_get(c_bufferlist);
+	cur_bufferlist = cur_fdlist->buffer;
+	if (ft_read_fd(fd, cur_bufferlist, cur_bufferlist))
+		readed = ft_get(cur_bufferlist);
 	else
-		s = NULL;
-	ft_clean_buffers(c_bufferlist, c_fdlist);
-	static_fdlist = ft_clean_fd_list(static_fdlist, c_fdlist);
-	return (s);
+		readed = NULL;
+	ft_clean_buffers(cur_bufferlist, cur_fdlist);
+	staticur_fdlist = ft_clean_fd_list(staticur_fdlist, cur_fdlist);
+	return (readed);
 }
-/*
-int		main(void)
-{
-	int	fd;
-	char*s = NULL;
-
-	fd = open("test.txt", O_RDONLY);
-	while (1)
-	{
-		s = get_next_line(fd);
-		if (!s)
-			break ;
-		printf("%s", s);
-	}
-	return (0);
-}*/

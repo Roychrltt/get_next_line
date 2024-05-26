@@ -6,7 +6,7 @@
 /*   By: xiaxu <xiaxu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:18:16 by xiaxu             #+#    #+#             */
-/*   Updated: 2024/05/26 15:18:18 by xiaxu            ###   ########.fr       */
+/*   Updated: 2024/05/26 15:34:15 by xiaxu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_bufferList	*ft_lst_new_buffer(void)
 	new->content = malloc(BUFFER_SIZE + 1);
 	if (!(new->content))
 		return (free(new), NULL);
-	(new->content)[0] = '\0';
+	(new->content)[0] = 0;
 	new->next_bufferlist = 0;
 	return (new);
 }
@@ -61,18 +61,18 @@ t_fdList	*ft_lst_new_fd(int fd)
 	return (new);
 }
 
-size_t	count_memory(t_bufferList *current)
+size_t	buffer_length(t_bufferList *current)
 {
-	size_t	memory;
+	size_t	len;
 	size_t	i;
 
-	memory = 1;
+	len = 1;
 	while (current)
 	{
 		i = 0;
 		while ((current->content)[i])
 		{
-			memory++;
+			len++;
 			i++;
 			if ((current->content)[i - 1] == '\n')
 				break ;
@@ -84,10 +84,10 @@ size_t	count_memory(t_bufferList *current)
 		}
 		current = current->next_bufferlist;
 	}
-	return (memory);
+	return (len);
 }
 
-int	ft_strchr(char *s)
+size_t	ft_strchr(char *s)
 {
 	size_t	i;
 
