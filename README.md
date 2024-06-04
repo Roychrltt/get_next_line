@@ -1,5 +1,7 @@
 # get_next_line
 
+Validated on 28/05/2024
+
 125/100
 
 Mandatory part perfect and no leaks.
